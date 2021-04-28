@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-flyrecipefront-dev-142948-authRole",
+      "UnauthRoleArn": "arn:aws:iam::545141119901:role/amplify-flyrecipefront-dev-142948-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::545141119901:role/amplify-flyrecipefront-dev-142948-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-flyrecipefront-dev-142948-deployment",
+      "UnauthRoleName": "amplify-flyrecipefront-dev-142948-unauthRole",
+      "StackName": "amplify-flyrecipefront-dev-142948",
+      "StackId": "arn:aws:cloudformation:us-east-2:545141119901:stack/amplify-flyrecipefront-dev-142948/7c804540-a860-11eb-83db-0a88f3d213bc",
+      "AmplifyAppId": "damcyoub9fkeb"
+    },
+    "categories": {
+      "auth": {
+        "flyfishrecipeuserlogin": {}
+      },
+      "function": {
+        "AdminQueriesf74d7110": {
+          "deploymentBucketName": "amplify-flyrecipefront-dev-142948-deployment",
+          "s3Key": "amplify-builds/AdminQueriesf74d7110-772f502b37306a6c6456-build.zip"
+        }
+      }
+    }
+  }
+}

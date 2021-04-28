@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import {GetCompleteRecipes} from './Hooks/GetCompleteRecipes'
+import MainPage from './Pages/MainPage'
+
 
 function App() {
+  const [recipes, setRecipes] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  //GetCompleteRecipes(setRecipes, setLoading);
+  useEffect(() => {
+    async function fetchRecipes() {
+      const apiUrl = "http://localhost:8080/api/v1/recipes/complete/";
+      const response = await fetch(apiUrl);
+      //console.log("response: " + response.json())
+      const data = await response.json();
+      setRecipes(data.recipes);
+      setLoading(false);
+    }
+    fetchRecipes();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {loading ? "Loading..." : <MainPage recipes = {recipes}/>}
+    </>
   );
 }
 
