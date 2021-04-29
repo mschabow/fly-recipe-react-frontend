@@ -22,5 +22,29 @@
         }
       }
     }
+  },
+  "flyfront": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-flyrecipefront-flyfront-143950-authRole",
+      "UnauthRoleArn": "arn:aws:iam::545141119901:role/amplify-flyrecipefront-flyfront-143950-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::545141119901:role/amplify-flyrecipefront-flyfront-143950-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-flyrecipefront-flyfront-143950-deployment",
+      "UnauthRoleName": "amplify-flyrecipefront-flyfront-143950-unauthRole",
+      "StackName": "amplify-flyrecipefront-flyfront-143950",
+      "StackId": "arn:aws:cloudformation:us-east-2:545141119901:stack/amplify-flyrecipefront-flyfront-143950/0e9cb150-a92b-11eb-85c2-0230bd8e0e32",
+      "AmplifyAppId": "damcyoub9fkeb"
+    },
+    "categories": {
+      "auth": {
+        "flyfishrecipeuserlogin": {}
+      },
+      "function": {
+        "AdminQueriesf74d7110": {
+          "deploymentBucketName": "amplify-flyrecipefront-flyfront-143950-deployment",
+          "s3Key": "amplify-builds/AdminQueriesf74d7110-772f502b37306a6c6456-build.zip"
+        }
+      }
+    }
   }
 }
