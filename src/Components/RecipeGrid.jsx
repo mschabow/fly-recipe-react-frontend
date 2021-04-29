@@ -1,6 +1,6 @@
 import {Container, Grid, Typography} from '@material-ui/core'
 
-import RecipeCard from '../Components/RecipeCard'
+import RecipeCard from './RecipeCard'
 
 export default function RecipeGrid(props){
 

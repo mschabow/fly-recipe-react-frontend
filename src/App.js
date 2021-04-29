@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {GetCompleteRecipes} from './Hooks/GetCompleteRecipes'
-import MainPage from './Pages/MainPage'
-
+import { withAuthenticator, AmplifySignOut } from "@aws-amplify/ui-react";
+import { GetCompleteRecipes } from "./Hooks/GetCompleteRecipes";
+import MainPage from "./Pages/MainPage";
 
 function App() {
   const [recipes, setRecipes] = useState(null);
@@ -20,11 +20,8 @@ function App() {
     fetchRecipes();
   }, []);
 
-  return (
-    <>
-      {loading ? "Loading..." : <MainPage recipes = {recipes}/>}
-    </>
-  );
+  return <>{loading ? "Loading..." : <MainPage recipes={recipes} />}</>;
 }
 
-export default App;
+//export default App;
+export default withAuthenticator(App);
