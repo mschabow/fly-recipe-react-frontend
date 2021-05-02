@@ -93,6 +93,7 @@ export default function SearchAppBar(props) {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
+            onClick={props.toggleDrawerOpen}
           >
             <MenuIcon />
           </IconButton>

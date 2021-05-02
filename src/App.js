@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {AmplifySignOut, AmplifyAuthenticator, AmplifySignIn, AmplifySignUp } from "@aws-amplify/ui-react";
+import {AmplifyAuthenticator, AmplifySignIn, AmplifySignUp } from "@aws-amplify/ui-react";
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
 import MainPage from "./Pages/MainPage";
-import Amplify, { Auth } from 'aws-amplify';
+import Amplify from 'aws-amplify';
 import awsconfig from './aws-exports';
 Amplify.configure(awsconfig);
 
@@ -35,9 +35,9 @@ function App() {
   return authState === AuthState.SignedIn && user ? (
     <div className="App">
         {console.log(user)}
-        <div>Hello, {user.attributes.name}</div>
-        <>{loading ? "Loading..." : <MainPage recipes={recipes} />}</>
-        <AmplifySignOut />
+        
+        <>{loading ? "Loading..." : <MainPage recipes={recipes} user={user}/>}</>
+        
     </div>
   ) : (
     <AmplifyAuthenticator usernameAlias="email">

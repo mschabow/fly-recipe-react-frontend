@@ -1,33 +1,64 @@
 
-import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Grid,
-  Hidden,
-  Button,
-  ButtonGroup,
-  TextField,
-  AppBar,
-  Paper,
-  Card,
-  Typography,
-} from "@material-ui/core"; 
-
+import React, { useState, useEffect} from "react";
 import SearchAppBar from "../Components/ApplicationBar";
 import Header from '../Components/Header'
 //import {Filter} from '../Components/Filter.jsx';
 import RecipeGrid from '../Components/RecipeGrid'
-import { Timer } from "@material-ui/icons";
 //import {Footer} from '../Components/Footer'
+import SideDrawer from '../Components/SideDrawer'
+
+
+
 
 
 
 export default function MainPage(props){
   const[displayedRecipes, setDisplayedRecipes] = useState(props.recipes);
   const[filterName, setFilterName] = useState("");
+  const[drawerOpen, setDrawerOpen] = useState(false)
+  const[favorites, setFavorites] = useState([]);
+  const[ingredients, setIngredients] = useState([]);
+
+  
+  useEffect(() => {
+    async function initializeUser() {
+      
+      let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/add-user`; // add-user only adds if needed
+      let  response = await fetch(apiUrl, {headers:{
+        'Access-Control-Allow-Origin':'*'
+        }, method: 'PUT'});
+      //console.log("response: " + response.json())
+      let  data = await response.text;
+      console.log(data);
+
+      apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/get-favorite-recipes`;
+      response = await fetch(apiUrl);
+      //console.log("response: " + response.json())
+      data = await response.json();
+      setFavorites(data.favoriteRecipes);
+
+      apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/get-ingredients`;
+      response = await fetch(apiUrl);
+      //console.log("response: " + response.json())
+      data = await response.json();
+      setIngredients(data.ownedIngredients);
+    }
+
+    
+    initializeUser();
+  }, [props.user.username]);
+
+
+  useEffect(() => {
+    
+  }, [props.user.name]);
+
+  useEffect(() => {
+    
+  }, [props.user.name]);
+
 
   function setSearchFilter(filterQuery){
-        console.log(filterQuery);
        let filter = filterQuery.toString().toLowerCase();
         if (filterQuery === "") {
           setFilterName("");
@@ -55,20 +86,47 @@ export default function MainPage(props){
         }      
   }
 
+  function toggleDrawerOpen(){
+    setDrawerOpen(!drawerOpen);
+  }
+
+  function addFavorite(favorite){
+    if(favorites.includes(favorite))
+      {
+        var newList = [];
+        favorites.forEach(i => {
+          if(!i.equals(favorite)) newList.push(i);
+        })
+        setFavorites(newList);
+    }
+    else setFavorites(favorites.push(favorite));
+    //TODO: Update Server
+  }
+
+  function addIngredient(ingredient){
+    setIngredients(ingredients.push(ingredient));
+    //TODO: Update Server
+  }
+
   return (
     <>
-      <Container>
-        <SearchAppBar setFilter={setSearchFilter} />
-      </Container>
-      <Container>
-        <Header filterName={filterName} />
-      </Container>
+      
+        <SearchAppBar
+          setFilter={setSearchFilter}
+          toggleDrawerOpen={toggleDrawerOpen}
+        />
+      
+      
+        <SideDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawerOpen}/>
+      
+        <Header filterName={filterName} user={props.user} />
+      
       {/* <Container>
         <Filter recipes = {allCompleteRecipes} setRecipes = {setDisplayedRecipes}/>
       </Container> */}
-      <Container>
-        <RecipeGrid recipes={displayedRecipes} />
-      </Container>
+      
+        <RecipeGrid recipes={displayedRecipes} favorites={favorites} ingredients={ingredients} addFavorite={addFavorite} addIngredient={addIngredient} />
+     
       {/* <Container>
         <Footer />
       </Container> */}
