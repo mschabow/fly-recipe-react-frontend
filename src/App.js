@@ -33,11 +33,10 @@ function App() {
   }, []);
 
   return authState === AuthState.SignedIn && user ? (
-    <div className="App">
-        {console.log(user)}
-        
-        <>{loading ? "Loading..." : <MainPage recipes={recipes} user={user}/>}</>
-        
+    <div className="App" style={{ backgroundColor: "lightslategray" }}>
+      {console.log(user)}
+
+      <>{loading ? "Loading..." : <MainPage recipes={recipes} user={user} />}</>
     </div>
   ) : (
     <AmplifyAuthenticator usernameAlias="email">
@@ -63,11 +62,11 @@ function App() {
             placeholder: "John Doe",
             required: true,
           },
-        ]} 
+        ]}
       />
       <AmplifySignIn slot="sign-in" usernameAlias="email" />
     </AmplifyAuthenticator>
-);
+  );
 }
 
 

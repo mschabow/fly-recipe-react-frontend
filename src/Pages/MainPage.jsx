@@ -1,135 +1,251 @@
-
-import React, { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import SearchAppBar from "../Components/ApplicationBar";
-import Header from '../Components/Header'
+import Header from "../Components/Header";
 //import {Filter} from '../Components/Filter.jsx';
-import RecipeGrid from '../Components/RecipeGrid'
+import RecipeGrid from "../Components/RecipeGrid";
 //import {Footer} from '../Components/Footer'
-import SideDrawer from '../Components/SideDrawer'
+import SideDrawer from "../Components/SideDrawer";
 
+import GetRecipeInfo from "../Functions/CalculateIngredientStats";
+import ingredientFound from "../Functions/FindIngredient";
 
+export default function MainPage(props) {
+  const [loading, setLoading] = useState(true);
+  const [displayedRecipes, setDisplayedRecipes] = useState(null);
+  const [filterName, setFilterName] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [userIngredients, setUserIngredients] = useState([]);
+  const [sortedRecipes, setSortedRecipes] = useState([]);
+  const [allIngredients, setAllIngredients] = useState([]);
+  const [displayedIngredients, setDisplayedIngredients] = useState([]);
 
-
-
-
-export default function MainPage(props){
-  const[displayedRecipes, setDisplayedRecipes] = useState(props.recipes);
-  const[filterName, setFilterName] = useState("");
-  const[drawerOpen, setDrawerOpen] = useState(false)
-  const[favorites, setFavorites] = useState([]);
-  const[ingredients, setIngredients] = useState([]);
-
-  
   useEffect(() => {
     async function initializeUser() {
-      
+      console.log("Intializing User");
       let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/add-user`; // add-user only adds if needed
-      let  response = await fetch(apiUrl, {headers:{
-        'Access-Control-Allow-Origin':'*'
-        }, method: 'PUT'});
-      //console.log("response: " + response.json())
-      let  data = await response.text;
-      console.log(data);
-
-      apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/get-favorite-recipes`;
-      response = await fetch(apiUrl);
-      //console.log("response: " + response.json())
-      data = await response.json();
+      let response = await fetch(apiUrl, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+        method: "PUT",
+      });
+      let data = await response.json();
+      let recipeInfo = updateRecipeStats(
+        props.recipes,
+        data.ingredientList,
+        data.favoriteRecipes
+      );
+      recipeInfo = sortResults(recipeInfo);
       setFavorites(data.favoriteRecipes);
+      setUserIngredients(data.ingredientList);
+      setSortedRecipes(recipeInfo);
+      setDisplayedRecipes(recipeInfo);
+      var allIngredients = getAllIngredients();
+      setAllIngredients(allIngredients);
+      setDisplayedIngredients(allIngredients);
 
-      apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/get-ingredients`;
-      response = await fetch(apiUrl);
-      //console.log("response: " + response.json())
-      data = await response.json();
-      setIngredients(data.ownedIngredients);
+      setLoading(false);
     }
 
-    
     initializeUser();
-  }, [props.user.username]);
+  }, []);
 
+  function getAllIngredients() {
+    var allIngredients = [];
 
-  useEffect(() => {
-    
-  }, [props.user.name]);
+    props.recipes.forEach((recipe) => {
+      recipe.ingredientList.forEach((ingredient) => {
+        if (!ingredientFound(ingredient, allIngredients)) {
+          allIngredients.push(ingredient);
+        }
+      });
+    });
 
-  useEffect(() => {
-    
-  }, [props.user.name]);
-
-
-  function setSearchFilter(filterQuery){
-       let filter = filterQuery.toString().toLowerCase();
-        if (filterQuery === "") {
-          setFilterName("");
-          setDisplayedRecipes(props.recipes);
-        } else {
-          setFilterName("Results for: " + filterQuery);
-          let foundRecipes = [];
-          let foundIngredients = []
-          props.recipes.forEach((recipe) => {
-            if (
-              recipe.name.toString().toLowerCase().includes(filter) ||
-              recipe.videoInfo.description.includes(filter)
-            ) {
-              foundRecipes.push(recipe);
-            } else var recipeFound = false;
-            recipe.ingredientList.forEach((ingredient) => {
-              if (ingredient.name.toString().toLowerCase().includes(filter)) {
-                recipeFound = true;
-              }
-            });
-            if (recipeFound) foundIngredients.push(recipe);
-          });
-          foundIngredients.forEach(p => foundRecipes.push(p));
-          setDisplayedRecipes(foundRecipes);
-        }      
+    allIngredients.sort((a, b) =>
+      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+    );
+    return allIngredients;
   }
 
-  function toggleDrawerOpen(){
+  function updateRecipeStats(
+    recipes,
+    ingredientList,
+    favoriteRecipes,
+    addIngredient
+  ) {
+    var recipeInfo = [];
+
+    recipes.forEach((recipe) => {
+      var recipeStats = GetRecipeInfo(
+        recipe,
+        ingredientList,
+        favoriteRecipes,
+        addIngredient
+      );
+      recipeInfo.push(recipeStats);
+    });
+    return recipeInfo;
+  }
+
+  function setRecipeFilter(filterQuery) {
+    let filter = filterQuery.toString().toLowerCase();
+    if (filterQuery === "") {
+      setFilterName("");
+      setDisplayedRecipes(sortedRecipes);
+    } else {
+      setFilterName("Results for: " + filterQuery);
+      let foundRecipes = [];
+      let foundIngredients = [];
+      sortedRecipes.forEach((recipeInfo) => {
+        if (
+          recipeInfo.recipe.name &&
+          (recipeInfo.recipe.name.toString().toLowerCase().includes(filter) ||
+            recipeInfo.recipe.videoInfo.description.includes(filter))
+        ) {
+          foundRecipes.push(recipeInfo);
+        } else {
+          var recipeFound = false;
+          recipeInfo.recipe.ingredientList.forEach(ingredient => {
+            if(ingredient.name && ingredient.name.toString().toLowerCase().includes(filter)){
+              recipeFound = true;
+            }
+          })
+          if (recipeFound) foundIngredients.push(recipeInfo);
+        }
+      });
+      foundIngredients.forEach((p) => foundRecipes.push(p));
+      foundRecipes = sortResults(foundRecipes);
+
+      setDisplayedRecipes(foundRecipes);
+    }
+  }
+
+  function sortResults(results){
+    results.sort((a, b) => {
+      return b.ownedPercent - a.ownedPercent;
+    });
+    results.sort((a, b) => {
+      return b.isFavorite - a.isFavorite;
+    });
+    return results;
+  }
+
+  function setIngredientFilter(filterQuery) {
+    let filter = filterQuery.toString().toLowerCase();
+    if (filterQuery === "") {
+      setDisplayedIngredients(allIngredients);
+    } else {
+      let foundIngredients = [];
+      allIngredients.forEach((ingredient) => {
+        if (
+          (ingredient.name &&
+            ingredient.name.toString().toLowerCase().includes(filter)) ||
+          (ingredient.type &&
+            ingredient.type.toString().toLowerCase().includes(filter))
+        ) {
+          foundIngredients.push(ingredient);
+        }
+      });
+      console.log("Setting Displayed Ingredients")
+      console.log(foundIngredients)
+      setDisplayedIngredients(foundIngredients);
+    }
+  }
+
+  function toggleDrawerOpen() {
     setDrawerOpen(!drawerOpen);
   }
 
-  function addFavorite(favorite){
-    if(favorites.includes(favorite))
-      {
-        var newList = [];
-        favorites.forEach(i => {
-          if(!i.equals(favorite)) newList.push(i);
-        })
-        setFavorites(newList);
+  async function addFavorite(favorite) {
+    var newList = [];
+    if (favorites.includes(favorite)) {
+      favorites.forEach((i) => {
+        if (i !== favorite) newList.push(i);
+      });
+    } else {
+      newList = favorites.concat(favorite);
     }
-    else setFavorites(favorites.push(favorite));
-    //TODO: Update Server
+
+    setFavorites(newList);
+
+    let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/update-favorites`; // add-user only adds if needed
+    let response = await fetch(apiUrl, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify(newList),
+    });
   }
 
-  function addIngredient(ingredient){
-    setIngredients(ingredients.push(ingredient));
-    //TODO: Update Server
+  async function addUserIngredient(ingredient) {
+    var newList = [];
+    var ingredientFound = false;
+    for (let index = 0; index < userIngredients.length; index++) {
+      if (userIngredients[index].name === ingredient.name) {
+        ingredientFound = true;
+        break;
+      }
+    }
+    if (ingredientFound) {
+      console.log("Removing ingredient");
+      userIngredients.forEach((i) => {
+        if (i.name !== ingredient.name) newList.push(i);
+      });
+    } else {
+      console.log("Adding Ingredient");
+      newList = userIngredients.concat(ingredient);
+    }
+
+    setUserIngredients(newList);
+
+    let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/update-ingredients`; // add-user only adds if needed
+    let response = await fetch(apiUrl, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify(newList),
+    });
   }
 
-  return (
-    <>
-      
-        <SearchAppBar
-          setFilter={setSearchFilter}
-          toggleDrawerOpen={toggleDrawerOpen}
-        />
-      
-      
-        <SideDrawer drawerOpen={drawerOpen} toggleDrawer={toggleDrawerOpen}/>
-      
-        <Header filterName={filterName} user={props.user} />
-      
+  return loading ? (
+    "Loading..."
+  ) : (
+    <div style={{ backgroundColor: "lightslategray" }}>
+      <SearchAppBar
+        setFilter={setRecipeFilter}
+        toggleDrawerOpen={toggleDrawerOpen}
+        
+      />
+      <SideDrawer
+        drawerOpen={drawerOpen}
+        toggleDrawer={toggleDrawerOpen}
+        allIngredients={displayedIngredients}
+        userIngredients={userIngredients}
+        addIngredient={addUserIngredient}
+        setIngredientFilter={setIngredientFilter}
+      />
+      <Header
+        filterName={filterName}
+        user={props.user}
+        recipeCount={props.recipes.length}
+      />
       {/* <Container>
         <Filter recipes = {allCompleteRecipes} setRecipes = {setDisplayedRecipes}/>
       </Container> */}
-      
-        <RecipeGrid recipes={displayedRecipes} favorites={favorites} ingredients={ingredients} addFavorite={addFavorite} addIngredient={addIngredient} />
-     
+      <RecipeGrid
+        recipes={displayedRecipes}
+        userIngredients={userIngredients}
+        addFavorite={addFavorite}
+        addIngredient={addUserIngredient}
+      />
       {/* <Container>
         <Footer />
       </Container> */}
-    </>
+    </div>
   );
 }

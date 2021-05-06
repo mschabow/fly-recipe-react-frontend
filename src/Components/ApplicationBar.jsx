@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -8,10 +8,11 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    position: "fixed",
+    
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -68,25 +69,22 @@ export default function SearchAppBar(props) {
   const classes = useStyles();
 
   const [typingTimeout, setTypingTimeout] = useState(null);
-  
 
-  const searchHandler = (query) =>{
-     
-    if (typingTimeout){
+  const searchHandler = (query) => {
+    if (typingTimeout) {
       clearTimeout(typingTimeout);
     }
 
     setTypingTimeout(
       setTimeout(() => {
         props.setFilter(query);
-      },800));
-    
-  }
-  
+      }, 800)
+    );
+  };
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar style={{ background: "#2E3B55" }}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -111,10 +109,9 @@ export default function SearchAppBar(props) {
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
-              onChange={(e => {
+              onChange={(e) => {
                 searchHandler(e.target.value);
-                
-              })}
+              }}
             />
           </div>
         </Toolbar>

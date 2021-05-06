@@ -1,9 +1,8 @@
-import { Grid } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 
 import RecipeCard from "./RecipeCard";
 
-export default function RecipeGrid (props)
-{
+export default function RecipeGrid (props){
 
   return (
     <Grid
@@ -12,11 +11,19 @@ export default function RecipeGrid (props)
       justify="center"
       alignItems="center"
       spacing={4}
+      
     >
-      {props.recipes.map((recipe) => {
+      {props.recipes.map((recipeInfo) => {
         return (
-          <Grid item key={recipe.name}>
-            <RecipeCard recipe={recipe} favorites={props.favorites} ingredients={props.ingredients} addFavorite={props.addFavorite} addIngredient={props.addIngredient}/>
+          <Grid item key={recipeInfo.recipe.videoId}>
+            <Paper>
+              <RecipeCard
+                recipeInfo={recipeInfo}
+                userIngredients={props.userIngredients}
+                addFavorite={props.addFavorite}
+                addIngredient={props.addIngredient}
+              />
+            </Paper>
           </Grid>
         );
       })}
