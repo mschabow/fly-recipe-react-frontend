@@ -23,7 +23,7 @@ export default function MainPage(props) {
   useEffect(() => {
     async function initializeUser() {
       console.log("Intializing User");
-      let apiUrl = `https://localhost:8080/api/v1/users/${props.user.username}/add-user/`; // add-user only adds if needed
+      let apiUrl = `https://fly-recipe-server.herokuapp.com/api/v1/users/${props.user.username}/add-user/`; // add-user only adds if needed
       let response = await fetch(apiUrl, {
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -106,11 +106,14 @@ export default function MainPage(props) {
           foundRecipes.push(recipeInfo);
         } else {
           var recipeFound = false;
-          recipeInfo.recipe.ingredientList.forEach(ingredient => {
-            if(ingredient.name && ingredient.name.toString().toLowerCase().includes(filter)){
+          recipeInfo.recipe.ingredientList.forEach((ingredient) => {
+            if (
+              ingredient.name &&
+              ingredient.name.toString().toLowerCase().includes(filter)
+            ) {
               recipeFound = true;
             }
-          })
+          });
           if (recipeFound) foundIngredients.push(recipeInfo);
         }
       });
@@ -121,7 +124,7 @@ export default function MainPage(props) {
     }
   }
 
-  function sortResults(results){
+  function sortResults(results) {
     results.sort((a, b) => {
       return b.ownedPercent - a.ownedPercent;
     });
@@ -147,8 +150,8 @@ export default function MainPage(props) {
           foundIngredients.push(ingredient);
         }
       });
-      console.log("Setting Displayed Ingredients")
-      console.log(foundIngredients)
+      console.log("Setting Displayed Ingredients");
+      console.log(foundIngredients);
       setDisplayedIngredients(foundIngredients);
     }
   }
@@ -201,7 +204,7 @@ export default function MainPage(props) {
 
     setUserIngredients(newList);
 
-    let apiUrl = `https://localhost:8080/api/v1/users/${props.user.username}/update-ingredients/`; // add-user only adds if needed
+    let apiUrl = `https://fly-recipe-server.herokuapp.com/api/v1/users/${props.user.username}/update-ingredients/`; // add-user only adds if needed
     let response = await fetch(apiUrl, {
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -219,7 +222,6 @@ export default function MainPage(props) {
       <SearchAppBar
         setFilter={setRecipeFilter}
         toggleDrawerOpen={toggleDrawerOpen}
-        
       />
       <SideDrawer
         drawerOpen={drawerOpen}
