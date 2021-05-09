@@ -1,6 +1,8 @@
 {
-    "resourceNameTruncated": "flyrec2762a69f",
-    "userPoolName": "flyfishuserpool",
+    "identityPoolName": "flyrecipereactfronte5e2fbbd2_identitypool_5e2fbbd2",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "flyrec5e2fbbd2",
+    "userPoolName": "flyrecipereactfronte5e2fbbd2_userpool_5e2fbbd2",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -10,14 +12,13 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Your verification code for Fly Recipe Book",
+    "emailVerificationSubject": "Your verification code",
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-        "email",
-        "name"
+        "email"
     ],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
@@ -27,11 +28,11 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "flyfis2762a69f_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "flyrec5e2fbbd2_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "2762a69f",
-    "resourceName": "flyfishrecipeuserlogin",
-    "authSelections": "userPoolOnly",
+    "sharedId": "5e2fbbd2",
+    "resourceName": "flyrecipereactfronte5e2fbbd2",
+    "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
             "AuthRole",
@@ -44,22 +45,12 @@
             "Arn"
         ]
     },
-    "useDefault": "manual",
+    "useDefault": "default",
     "usernameAttributes": [
         "email"
     ],
-    "userPoolGroups": false,
-    "adminQueries": false,
-    "triggers": "{}",
-    "hostedUI": false,
     "userPoolGroupList": [],
-    "adminQueryGroup": "administratorgroup",
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
-    "parentStack": {
-        "Ref": "AWS::StackId"
-    },
-    "permissions": [],
-    "dependsOn": [],
-    "authProviders": []
+    "dependsOn": []
 }

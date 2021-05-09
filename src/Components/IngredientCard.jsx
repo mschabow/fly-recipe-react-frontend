@@ -12,7 +12,8 @@ import { Chip } from "@material-ui/core";
 
 const useStyles = makeStyles({
   root: {
-    minWidth: 375,
+    minWidth: 250,
+    maxWidth: 250,
     maxHeight: 100,
   },
 });
@@ -71,10 +72,11 @@ export default function IngredientCard(props) {
 
   return (
     <>
-      <IngredeintType/>
+      <IngredeintType />
 
       <Chip
-        label={ingredient.name && ingredient.name.substring(0, 60)}
+        size="small"
+        label={ingredient.name && ingredient.name.substring(0, 30)}
         color={color}
         deleteIcon={icon}
         onDelete={() => onAddDelete(ingredient)}

@@ -19,8 +19,8 @@ import { Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 500,
-    maxWidth: 500,
+    minWidth: 250,
+    maxWidth: 250
   },
   media: {
     height: 0,
@@ -99,14 +99,14 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
         title={recipe.name}
       />
       <CardContent>
-        <Typography variant="h6" color="textSecondary" component="p" noWrap="true">
+        {/* <Typography variant="body2" color="textSecondary" component="p" noWrap="true">
           {recipe.name.replace("by Fly Fish Food", "")}
-        </Typography>
-        <Typography variant="body1" color="textSecondary" component="p">
+        </Typography> */}
+        <Typography variant="body2" color="textSecondary" component="p">
           {`Owned Ingredients: ${ownedIngredients} / ${ingredients}`}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          {`Optional or Alternate Ingredients: ${ownedOptionalIngredients} / ${optionalIngredients}`}
+          {`Alternate Ingredients: ${ownedOptionalIngredients} / ${optionalIngredients}`}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
