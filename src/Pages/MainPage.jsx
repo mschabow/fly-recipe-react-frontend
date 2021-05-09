@@ -23,7 +23,7 @@ export default function MainPage(props) {
   useEffect(() => {
     async function initializeUser() {
       console.log("Intializing User");
-      let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/add-user`; // add-user only adds if needed
+      let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/add-user/`; // add-user only adds if needed
       let response = await fetch(apiUrl, {
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -169,7 +169,7 @@ export default function MainPage(props) {
 
     setFavorites(newList);
 
-    let apiUrl = `https://fly-recipe-server.herokuapp.com/api/v1/users/${props.user.username}/update-favorites`; // add-user only adds if needed
+    let apiUrl = `https://fly-recipe-server.herokuapp.com/api/v1/users/${props.user.username}/update-favorites/`; // add-user only adds if needed
     let response = await fetch(apiUrl, {
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -201,7 +201,7 @@ export default function MainPage(props) {
 
     setUserIngredients(newList);
 
-    let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/update-ingredients`; // add-user only adds if needed
+    let apiUrl = `http://localhost:8080/api/v1/users/${props.user.username}/update-ingredients/`; // add-user only adds if needed
     let response = await fetch(apiUrl, {
       headers: {
         "Access-Control-Allow-Origin": "*",
