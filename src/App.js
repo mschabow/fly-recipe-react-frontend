@@ -7,7 +7,7 @@ import awsconfig from './aws-exports';
 Amplify.configure(awsconfig);
 
 function App() {
-  const [serverUrl, SetUrl] = useState("https://fly-recipe-server.herokuapp.com");
+  const [serverUrl, SetUrl] = useState("https://fly-recipe-server.herokuapp.com/");
   // const [serverUrl, SetUrl] = useState(
   //   "http://localhost:8080/"
   // );
