@@ -8,22 +8,16 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { Chip } from "@material-ui/core";
-
-const useStyles = makeStyles({
-  root: {
-    minWidth: 250,
-    maxWidth: 250,
-    maxHeight: 100,
-  },
-});
+import { Chip, Container, Grid } from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import ShopIcon from "@material-ui/icons/Shop";
+import { Shop } from "@material-ui/icons";
 
 export default function IngredientCard(props) {
   const { ingredient, userIngredients, addIngredient, hideType } = props;
-  const [icon, setIcon] = useState(<AddIcon />);
-  const [color, setColor] = useState("disabled");
+  const [Icon, setIcon] = useState(<AddIcon />);
+  const [color, setColor] = useState("lightGray");
   const [isOwned, setIsOwned] = useState(false);
-  const classes = useStyles();
 
   useEffect(() => {
     var ingredientFound = false;
@@ -37,17 +31,17 @@ export default function IngredientCard(props) {
     if (ingredientFound) {
       setIsOwned(true);
       setIcon(<RemoveIcon />);
-      setColor("primary");
+      setColor("lightGreen");
       return;
     } else {
       setIsOwned(false);
       setIcon(<AddIcon />);
-      setColor("disabled");
+      setColor("lightGray");
       return;
     }
   }, [userIngredients]);
 
-  function onAddDelete(ingredient) {
+  function handleAddDelete(ingredient) {
     if (!isOwned) {
       setIsOwned(!isOwned);
       setIcon(<RemoveIcon />);
@@ -64,24 +58,50 @@ export default function IngredientCard(props) {
     window.open(`https://www.flyfishfood.com${ingredient.link}`, "_blank");
   }
 
-  function IngredeintType(){
-    return (
-      !hideType && <Typography variant="body2">{ingredient.type}</Typography>
-    )
-  }
-
   return (
-    <>
-      <IngredeintType />
+    <Container>
+      <Card style={{ backgroundColor: color }}>
+        {!hideType && (
+          <Typography variant="caption" align="left">
+            {ingredient.type}
+          </Typography>
+        )}
+        <Grid container spacing={1}>
+          <Grid item xs="2">            
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={() => handleAddDelete(ingredient)}
+              >
+                {Icon}
+              </IconButton>
+          </Grid>
+          <Grid item xs="8">
+              <Typography variant="button" component="p" align="left">
+                {ingredient.name && ingredient.name}
+              </Typography>
+          </Grid>
+          <Grid item xs="2">
+            
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={() => handleClick(ingredient.link)}
+              >
+                <ShopIcon />
+              </IconButton>
+          </Grid>
+        </Grid>
 
-      <Chip
+        {/* <Chip
         size="small"
         label={ingredient.name && ingredient.name.substring(0, 30)}
         color={color}
         deleteIcon={icon}
         onDelete={() => onAddDelete(ingredient)}
         onClick={() => handleClick(ingredient.link)}
-      />
-    </>
+      /> */}
+      </Card>
+    </Container>
   );
 }

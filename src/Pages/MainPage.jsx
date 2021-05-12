@@ -1,15 +1,17 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Container } from "@material-ui/core";
 import SearchAppBar from "../Components/ApplicationBar";
 import Header from "../Components/Header";
 //import {Filter} from '../Components/Filter.jsx';
 import RecipeGrid from "../Components/RecipeGrid";
 //import {Footer} from '../Components/Footer'
 import SideDrawer from "../Components/SideDrawer";
-
 import GetRecipeInfo from "../Functions/CalculateIngredientStats";
 import ingredientFound from "../Functions/FindIngredient";
 
-export default function MainPage(props) {
+export default function MainPage({recipes, user, serverUrl}) {
+  const [width, setWidth] = React.useState(window.innerWidth);
+  const [height, setHeight] = React.useState(window.innerHeight);
   const [loading, setLoading] = useState(true);
   const [displayedRecipes, setDisplayedRecipes] = useState(null);
   const [filterName, setFilterName] = useState("");
@@ -23,7 +25,7 @@ export default function MainPage(props) {
   useEffect(() => {
     async function initializeUser() {
       console.log("Intializing User");
-      let apiUrl = `https://fly-recipe-server.herokuapp.com/api/v1/users/${props.user.username}/add-user/`; // add-user only adds if needed
+      let apiUrl = `${serverUrl}api/v1/users/${user.username}/add-user/`; // add-user only adds if needed
       let response = await fetch(apiUrl, {
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -31,8 +33,9 @@ export default function MainPage(props) {
         method: "PUT",
       });
       let data = await response.json();
+      console.log(data)
       let recipeInfo = updateRecipeStats(
-        props.recipes,
+        recipes,
         data.ingredientList,
         data.favoriteRecipes
       );
@@ -54,7 +57,7 @@ export default function MainPage(props) {
   function getAllIngredients() {
     var allIngredients = [];
 
-    props.recipes.forEach((recipe) => {
+    recipes.forEach((recipe) => {
       recipe.ingredientList.forEach((ingredient) => {
         if (!ingredientFound(ingredient, allIngredients)) {
           allIngredients.push(ingredient);
@@ -172,7 +175,7 @@ export default function MainPage(props) {
 
     setFavorites(newList);
 
-    let apiUrl = `https://fly-recipe-server.herokuapp.com/api/v1/users/${props.user.username}/update-favorites/`; // add-user only adds if needed
+    let apiUrl = `${serverUrl}api/v1/users/${user.username}/update-favorites/`; // add-user only adds if needed
     let response = await fetch(apiUrl, {
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -200,11 +203,14 @@ export default function MainPage(props) {
     } else {
       console.log("Adding Ingredient");
       newList = userIngredients.concat(ingredient);
+      console.log("Sending Ingredient List: ")
+      console.log(newList)
     }
 
     setUserIngredients(newList);
+    console.log(newList)
 
-    let apiUrl = `https://fly-recipe-server.herokuapp.com/api/v1/users/${props.user.username}/update-ingredients/`; // add-user only adds if needed
+    let apiUrl = `${serverUrl}api/v1/users/${user.username}/update-ingredients/`; // add-user only adds if needed
     let response = await fetch(apiUrl, {
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -213,12 +219,13 @@ export default function MainPage(props) {
       method: "PATCH",
       body: JSON.stringify(newList),
     });
+    console.log(response)
   }
 
   return loading ? (
     "Loading..."
   ) : (
-    <div style={{ backgroundColor: "lightslategray" }}>
+    <>
       <SearchAppBar
         setFilter={setRecipeFilter}
         toggleDrawerOpen={toggleDrawerOpen}
@@ -231,23 +238,28 @@ export default function MainPage(props) {
         addIngredient={addUserIngredient}
         setIngredientFilter={setIngredientFilter}
       />
-      <Header
-        filterName={filterName}
-        user={props.user}
-        recipeCount={props.recipes.length}
-      />
-      {/* <Container>
+      <Container style={{marginTop: 75, padding:0}}>
+        <Header
+          filterName={filterName}
+          user={user}
+          recipeCount={recipes.length}
+        />
+        {/* <Container>
         <Filter recipes = {allCompleteRecipes} setRecipes = {setDisplayedRecipes}/>
       </Container> */}
-      <RecipeGrid
-        recipes={displayedRecipes}
-        userIngredients={userIngredients}
-        addFavorite={addFavorite}
-        addIngredient={addUserIngredient}
-      />
+        <RecipeGrid
+          
+          recipes={displayedRecipes}
+          userIngredients={userIngredients}
+          addFavorite={addFavorite}
+          addIngredient={addUserIngredient}
+          width = {width}
+        />
+      </Container>
+
       {/* <Container>
         <Footer />
       </Container> */}
-    </div>
+    </>
   );
 }

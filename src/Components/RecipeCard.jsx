@@ -15,13 +15,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import YouTubeIcon from "@material-ui/icons/YouTube";
 import CheckIcon from "@material-ui/icons/Check";
 import IngredientCard from "../Components/IngredientCard";
-import { Grid } from "@material-ui/core";
+import { Container, Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    minWidth: 250,
-    maxWidth: 250
-  },
+  
   media: {
     height: 0,
     paddingTop: "56.25%", // 16:9
@@ -39,17 +36,15 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
-
 }));
 
-export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, addIngredient }) {
+export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, addIngredient, width }) {
   const {
     recipe,
     ingredients,
     optionalIngredients,
     ownedIngredients,
     ownedOptionalIngredients,
-    ownedPercent,
     isFavorite,
   } = recipeInfo;
   const classes = useStyles();
@@ -76,10 +71,12 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
       : setFavoriteColor("disabled");
   };
 
-  return  (
-    loading ? "" :
-    <Card className={classes.root}>
-      {/* <CardHeader
+  return loading ? (
+    ""
+  ) : (
+    <Container>
+      <Card>
+        {/* <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
             R
@@ -93,67 +90,71 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
         title={recipe.name}
         subheader="September 14, 2016"
       /> */}
-      <CardMedia
-        className={classes.media}
-        image={recipe.videoInfo.thumbnail.url.replace("default", "sddefault")}
-        title={recipe.name}
-      />
-      <CardContent>
-        {/* <Typography variant="body2" color="textSecondary" component="p" noWrap="true">
+        <CardMedia
+          className={classes.media}
+          image={recipe.videoInfo.thumbnail.url.replace("default", "sddefault")}
+          title={recipe.name}
+        />
+        <CardContent>
+          {/* <Typography variant="body2" color="textSecondary" component="p" noWrap="true">
           {recipe.name.replace("by Fly Fish Food", "")}
         </Typography> */}
-        <Typography variant="body2" color="textSecondary" component="p">
-          {`Owned Ingredients: ${ownedIngredients} / ${ingredients}`}
-        </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          {`Alternate Ingredients: ${ownedOptionalIngredients} / ${optionalIngredients}`}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites" onClick={handleFavoriteClick}>
-          <FavoriteIcon color={favoriteColor} />
-        </IconButton>
-        {/* <IconButton aria-label="share">
+          <Typography variant="body2" color="textSecondary" component="p">
+            {`Owned Ingredients: ${ownedIngredients} / ${ingredients}`}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {`Alternate Ingredients: ${ownedOptionalIngredients} / ${optionalIngredients}`}
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton
+            aria-label="add to favorites"
+            onClick={handleFavoriteClick}
+          >
+            <FavoriteIcon color={favoriteColor} />
+          </IconButton>
+          {/* <IconButton aria-label="share">
           <ShareIcon />
         </IconButton> */}
-        <IconButton aria-label="watch youtube video">
-          <a
-            href={`https://www.youtube.com/watch?v=${recipe.videoId}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <YouTubeIcon />
-          </a>
-        </IconButton>
+          <IconButton aria-label="watch youtube video">
+            <a
+              href={`https://www.youtube.com/watch?v=${recipe.videoId}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <YouTubeIcon />
+            </a>
+          </IconButton>
 
-        <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Grid container direction="row" justify="left" spacing={4}>
-            {recipe.ingredientList.map((ingredient) => {
-              return (
-                <Grid item key={ingredient.id}>
-                  <IngredientCard
-                    ingredient={ingredient}
-                    userIngredients={userIngredients}
-                    addIngredient={addIngredient}
-                  />
-                </Grid>
-              );
+          <IconButton
+            className={clsx(classes.expand, {
+              [classes.expandOpen]: expanded,
             })}
-          </Grid>
-        </CardContent>
-      </Collapse>
-    </Card>
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Grid container direction="column" justify="center" spacing={1} style={{padding:0, margin:0}}>
+              {recipe.ingredientList.map((ingredient) => {
+                return (
+                  <Grid item key={ingredient.id}>
+                    <IngredientCard
+                      ingredient={ingredient}
+                      userIngredients={userIngredients}
+                      addIngredient={addIngredient}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </CardContent>
+        </Collapse>
+      </Card>
+    </Container>
   );
 }

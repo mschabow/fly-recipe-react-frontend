@@ -11,11 +11,10 @@ import SearchIcon from "@material-ui/icons/Search";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    position: "fixed",
-    
-  },
+      },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2)
   },
   title: {
     flexGrow: 1,
@@ -32,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: fade(theme.palette.common.white, 0.25),
     },
     marginLeft: 0,
+    marginRight: theme.spacing(3),
     width: "100%",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(1),
@@ -51,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
     color: "inherit",
   },
   inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(1, 1, 1, 1),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
-    width: "100%",
+    width: "75%",
     [theme.breakpoints.up("sm")]: {
       width: "12ch",
       "&:focus": {
@@ -84,7 +84,7 @@ export default function SearchAppBar(props) {
 
   return (
     <div className={classes.root}>
-      <AppBar style={{ background: "#2E3B55" }}>
+      <AppBar position="fixed" style={{ background: "#2E3B55" }}>
         <Toolbar>
           <IconButton
             edge="start"

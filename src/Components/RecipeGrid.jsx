@@ -1,29 +1,33 @@
-import { Grid, Paper } from "@material-ui/core";
+import { Grid} from "@material-ui/core";
 
 import RecipeCard from "./RecipeCard";
 
-export default function RecipeGrid (props){
-
+export default function RecipeGrid({
+  recipes,
+  userIngredients,
+  addFavorite,
+  addIngredient,
+  width,
+}) {
   return (
     <Grid
       container
       direction="row"
       justify="center"
-      alignItems="center"
+      alignItems="left"
       spacing={4}
-      
+      style={{ backgroundColor: "lightSlateGray" }}
     >
-      {props.recipes.map((recipeInfo) => {
+      {recipes.map((recipeInfo) => {
         return (
-          <Grid item key={recipeInfo.recipe.videoId}>
-            <Paper>
-              <RecipeCard
-                recipeInfo={recipeInfo}
-                userIngredients={props.userIngredients}
-                addFavorite={props.addFavorite}
-                addIngredient={props.addIngredient}
-              />
-            </Paper>
+          <Grid item key={recipeInfo.recipe.videoId}xs="12" sm="6">            
+            <RecipeCard
+              recipeInfo={recipeInfo}
+              userIngredients={userIngredients}
+              addFavorite={addFavorite}
+              addIngredient={addIngredient}
+              width={width}
+            />
           </Grid>
         );
       })}

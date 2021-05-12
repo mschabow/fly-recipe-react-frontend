@@ -1,25 +1,64 @@
 import React from "react";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import { fade, makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import { AmplifySignOut } from "@aws-amplify/ui-react";
 import { Grid } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import IngredientCard from "../Components/IngredientCard";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   list: {
-    width: 400,
+    width: 425,
   },
   fullList: {
-    width: "500",
+    width: "auto",
   },
-});
-
-
+  search: {
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    "&:hover": {
+      backgroundColor: fade(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    marginRight: theme.spacing(3),
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(1),
+      width: "auto",
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inputRoot: {
+    color: "inherit",
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 1),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create("width"),
+    width: "75%",
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
+      },
+    },
+  },
+}));
 
 export default function SideDrawer(props) {
   const {
@@ -28,7 +67,7 @@ export default function SideDrawer(props) {
     allIngredients,
     userIngredients,
     addIngredient,
-    setIngredientFilter
+    setIngredientFilter,
   } = props;
   const classes = useStyles();
   const [typingTimeout, setTypingTimeout] = React.useState(null);
@@ -55,8 +94,13 @@ export default function SideDrawer(props) {
       // onKeyDown={() => toggleDrawer()}
     >
       <List>
-        <AmplifySignOut position="sticky" />
+        <Button fullWidth="true" color="primary" onClick={() => toggleDrawer()}>
+          Close Ingredients Drawer
+        </Button>
         <Divider />
+        <AmplifySignOut position="fixed" />
+        <Divider />
+
         <div position="sticky" className={classes.search}>
           <div className={classes.searchIcon}>
             <SearchIcon />
@@ -73,11 +117,11 @@ export default function SideDrawer(props) {
             }}
           />
         </div>
-        <Divider />
-        <Grid container direction="row" justify="left" spacing={2}>
+        <Divider/>
+        <Grid container direction="row" justify="left" spacing={1} style={{marginTop: 5}}>
           {allIngredients.map((ingredient) => {
             return (
-              <Grid item key={ingredient.id}>
+              <Grid item xs="12" key={ingredient.id}>
                 <IngredientCard
                   ingredient={ingredient}
                   userIngredients={userIngredients}
