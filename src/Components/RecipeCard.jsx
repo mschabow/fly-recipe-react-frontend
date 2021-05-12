@@ -10,15 +10,12 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import YouTubeIcon from "@material-ui/icons/YouTube";
-import CheckIcon from "@material-ui/icons/Check";
 import IngredientCard from "../Components/IngredientCard";
 import { Container, Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  
   media: {
     height: 0,
     paddingTop: "56.25%", // 16:9
@@ -38,7 +35,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, addIngredient, width }) {
+export default function RecipeCard({
+  recipeInfo,
+  userIngredients,
+  addFavorite,
+  addIngredient,
+}) {
   const {
     recipe,
     ingredients,
@@ -51,14 +53,22 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
   const [expanded, setExpanded] = useState(false);
   const [favoriteColor, setFavoriteColor] = useState("disabled");
   const [loading, setLoading] = useState(true);
+  const [ownedCount, setOwnedCount] = useState(ownedIngredients);
+  const [ownedOptionalCount, setOwnedOptionalCount] = useState(
+    ownedOptionalIngredients
+  );
 
   useEffect(() => {
     if (isFavorite) {
       setFavoriteColor("secondary");
-      
     }
     setLoading(false);
   }, [isFavorite]);
+
+  useEffect(() => {
+    setOwnedCount(ownedIngredients);
+    setOwnedOptionalCount(ownedOptionalIngredients);
+  }, [recipeInfo]);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -69,6 +79,13 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
     favoriteColor === "disabled"
       ? setFavoriteColor("secondary")
       : setFavoriteColor("disabled");
+  };
+
+  const updateOwnedCount = (number) => {
+    setOwnedCount(ownedCount + number);
+  };
+  const updateOwnedOptionalCount = (number) => {
+    setOwnedOptionalCount(ownedOptionalCount + number);
   };
 
   return loading ? (
@@ -100,10 +117,10 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
           {recipe.name.replace("by Fly Fish Food", "")}
         </Typography> */}
           <Typography variant="body2" color="textSecondary" component="p">
-            {`Owned Ingredients: ${ownedIngredients} / ${ingredients}`}
+            {`Owned Ingredients: ${ownedCount} / ${ingredients}`}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            {`Alternate Ingredients: ${ownedOptionalIngredients} / ${optionalIngredients}`}
+            {`Alternate Ingredients: ${ownedOptionalCount} / ${optionalIngredients}`}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
@@ -139,7 +156,13 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Grid container direction="column" justify="center" spacing={1} style={{padding:0, margin:0}}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              spacing={1}
+              style={{ padding: 0, margin: 0 }}
+            >
               {recipe.ingredientList.map((ingredient) => {
                 return (
                   <Grid item key={ingredient.id}>
@@ -147,6 +170,8 @@ export default function RecipeCard({ recipeInfo, userIngredients, addFavorite, a
                       ingredient={ingredient}
                       userIngredients={userIngredients}
                       addIngredient={addIngredient}
+                      updateOwnedCount={updateOwnedCount}
+                      updateOwnedOptionalCount={updateOwnedOptionalCount}
                     />
                   </Grid>
                 );

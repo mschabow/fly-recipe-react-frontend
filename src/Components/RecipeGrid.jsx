@@ -1,4 +1,4 @@
-import { Grid} from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 import RecipeCard from "./RecipeCard";
 
@@ -7,7 +7,6 @@ export default function RecipeGrid({
   userIngredients,
   addFavorite,
   addIngredient,
-  width,
 }) {
   return (
     <Grid
@@ -20,13 +19,12 @@ export default function RecipeGrid({
     >
       {recipes.map((recipeInfo) => {
         return (
-          <Grid item key={recipeInfo.recipe.videoId}xs="12" sm="6">            
+          <Grid item key={recipeInfo.recipe.videoId} xs="12" sm="6">
             <RecipeCard
               recipeInfo={recipeInfo}
               userIngredients={userIngredients}
               addFavorite={addFavorite}
               addIngredient={addIngredient}
-              width={width}
             />
           </Grid>
         );

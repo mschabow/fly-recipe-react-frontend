@@ -13,8 +13,14 @@ import Paper from "@material-ui/core/Paper";
 import ShopIcon from "@material-ui/icons/Shop";
 import { Shop } from "@material-ui/icons";
 
-export default function IngredientCard(props) {
-  const { ingredient, userIngredients, addIngredient, hideType } = props;
+export default function IngredientCard({
+  ingredient,
+  userIngredients,
+  addIngredient,
+  hideType,
+  updateOwnedCount,
+  updateOwnedOptionalCount,
+}) {
   const [Icon, setIcon] = useState(<AddIcon />);
   const [color, setColor] = useState("lightGray");
   const [isOwned, setIsOwned] = useState(false);
@@ -22,7 +28,7 @@ export default function IngredientCard(props) {
   useEffect(() => {
     var ingredientFound = false;
     for (let index = 0; index < userIngredients.length; index++) {
-      if (userIngredients[index].name === ingredient.name) {
+      if (userIngredients[index] === ingredient.name) {
         ingredientFound = true;
         break;
       }
@@ -46,10 +52,19 @@ export default function IngredientCard(props) {
       setIsOwned(!isOwned);
       setIcon(<RemoveIcon />);
       setColor("primary");
+
+      // ingredient.type.toLowerCase().includes("alternate") ||
+      // ingredient.type.toLowerCase().includes("option")
+      //   ? updateOwnedOptionalCount(1)
+      //   : updateOwnedCount(1);
     } else {
       setIsOwned(!isOwned);
       setIcon(<AddIcon />);
       setColor("disabled");
+      // ingredient.type.toLowerCase().includes("alternate") ||
+      // ingredient.type.toLowerCase().includes("option")
+      //   ? updateOwnedOptionalCount(-1)
+      //   : updateOwnedCount(-1);
     }
     addIngredient(ingredient);
   }
@@ -67,29 +82,28 @@ export default function IngredientCard(props) {
           </Typography>
         )}
         <Grid container spacing={1}>
-          <Grid item xs="2">            
-              <IconButton
-                size="small"
-                color="primary"
-                onClick={() => handleAddDelete(ingredient)}
-              >
-                {Icon}
-              </IconButton>
+          <Grid item xs="2">
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => handleAddDelete(ingredient)}
+            >
+              {Icon}
+            </IconButton>
           </Grid>
           <Grid item xs="8">
-              <Typography variant="button" component="p" align="left">
-                {ingredient.name && ingredient.name}
-              </Typography>
+            <Typography variant="button" component="p" align="left">
+              {ingredient.name && ingredient.name}
+            </Typography>
           </Grid>
           <Grid item xs="2">
-            
-              <IconButton
-                size="small"
-                color="primary"
-                onClick={() => handleClick(ingredient.link)}
-              >
-                <ShopIcon />
-              </IconButton>
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => handleClick(ingredient.link)}
+            >
+              <ShopIcon />
+            </IconButton>
           </Grid>
         </Grid>
 

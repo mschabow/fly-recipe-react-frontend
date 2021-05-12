@@ -9,9 +9,7 @@ import SideDrawer from "../Components/SideDrawer";
 import GetRecipeInfo from "../Functions/CalculateIngredientStats";
 import ingredientFound from "../Functions/FindIngredient";
 
-export default function MainPage({recipes, user, serverUrl}) {
-  const [width, setWidth] = React.useState(window.innerWidth);
-  const [height, setHeight] = React.useState(window.innerHeight);
+export default function MainPage({ recipes, user, serverUrl }) {
   const [loading, setLoading] = useState(true);
   const [displayedRecipes, setDisplayedRecipes] = useState(null);
   const [filterName, setFilterName] = useState("");
@@ -23,7 +21,7 @@ export default function MainPage({recipes, user, serverUrl}) {
   const [displayedIngredients, setDisplayedIngredients] = useState([]);
 
   useEffect(() => {
-    async function initializeUser() {
+    const initializeUser = async () => {
       console.log("Intializing User");
       let apiUrl = `${serverUrl}api/v1/users/${user.username}/add-user/`; // add-user only adds if needed
       let response = await fetch(apiUrl, {
@@ -33,7 +31,7 @@ export default function MainPage({recipes, user, serverUrl}) {
         method: "PUT",
       });
       let data = await response.json();
-      console.log(data)
+      console.log(data);
       let recipeInfo = updateRecipeStats(
         recipes,
         data.ingredientList,
@@ -49,17 +47,19 @@ export default function MainPage({recipes, user, serverUrl}) {
       setDisplayedIngredients(allIngredients);
 
       setLoading(false);
-    }
+    };
 
     initializeUser();
   }, []);
 
-  function getAllIngredients() {
+  const getAllIngredients = () => {
+    var allIngredientNames = [];
     var allIngredients = [];
 
     recipes.forEach((recipe) => {
       recipe.ingredientList.forEach((ingredient) => {
-        if (!ingredientFound(ingredient, allIngredients)) {
+        if (!ingredientFound(ingredient, allIngredientNames)) {
+          allIngredientNames.push(ingredient.name);
           allIngredients.push(ingredient);
         }
       });
@@ -69,14 +69,14 @@ export default function MainPage({recipes, user, serverUrl}) {
       a.name > b.name ? 1 : b.name > a.name ? -1 : 0
     );
     return allIngredients;
-  }
+  };
 
-  function updateRecipeStats(
+  const updateRecipeStats = (
     recipes,
     ingredientList,
     favoriteRecipes,
     addIngredient
-  ) {
+  ) => {
     var recipeInfo = [];
 
     recipes.forEach((recipe) => {
@@ -89,9 +89,9 @@ export default function MainPage({recipes, user, serverUrl}) {
       recipeInfo.push(recipeStats);
     });
     return recipeInfo;
-  }
+  };
 
-  function setRecipeFilter(filterQuery) {
+  const setRecipeFilter = (filterQuery) => {
     let filter = filterQuery.toString().toLowerCase();
     if (filterQuery === "") {
       setFilterName("");
@@ -125,9 +125,9 @@ export default function MainPage({recipes, user, serverUrl}) {
 
       setDisplayedRecipes(foundRecipes);
     }
-  }
+  };
 
-  function sortResults(results) {
+  const sortResults = (results) => {
     results.sort((a, b) => {
       return b.ownedPercent - a.ownedPercent;
     });
@@ -135,9 +135,9 @@ export default function MainPage({recipes, user, serverUrl}) {
       return b.isFavorite - a.isFavorite;
     });
     return results;
-  }
+  };
 
-  function setIngredientFilter(filterQuery) {
+  const setIngredientFilter = (filterQuery) => {
     let filter = filterQuery.toString().toLowerCase();
     if (filterQuery === "") {
       setDisplayedIngredients(allIngredients);
@@ -157,13 +157,13 @@ export default function MainPage({recipes, user, serverUrl}) {
       console.log(foundIngredients);
       setDisplayedIngredients(foundIngredients);
     }
-  }
+  };
 
-  function toggleDrawerOpen() {
+  const toggleDrawerOpen = () => {
     setDrawerOpen(!drawerOpen);
-  }
+  };
 
-  async function addFavorite(favorite) {
+  const addFavorite = async (favorite) => {
     var newList = [];
     if (favorites.includes(favorite)) {
       favorites.forEach((i) => {
@@ -184,13 +184,19 @@ export default function MainPage({recipes, user, serverUrl}) {
       method: "PATCH",
       body: JSON.stringify(newList),
     });
-  }
+  };
 
-  async function addUserIngredient(ingredient) {
+  const addUserIngredient = async (ingredient) => {
     var newList = [];
     var ingredientFound = false;
     for (let index = 0; index < userIngredients.length; index++) {
-      if (userIngredients[index].name === ingredient.name) {
+      console.log(
+        "UserIngredient: " +
+          userIngredients[index] +
+          "Added Ingredient: " +
+          ingredient.name
+      );
+      if (userIngredients[index] === ingredient.name) {
         ingredientFound = true;
         break;
       }
@@ -198,17 +204,18 @@ export default function MainPage({recipes, user, serverUrl}) {
     if (ingredientFound) {
       console.log("Removing ingredient");
       userIngredients.forEach((i) => {
-        if (i.name !== ingredient.name) newList.push(i);
+        if (i !== ingredient.name) newList.push(i);
       });
     } else {
       console.log("Adding Ingredient");
-      newList = userIngredients.concat(ingredient);
-      console.log("Sending Ingredient List: ")
-      console.log(newList)
+      newList = userIngredients.concat(ingredient.name);
+      console.log("Sending Ingredient List: ");
+      console.log(newList);
     }
 
+    let recipeInfo = updateRecipeStats(displayedRecipes, newList, favorites);
     setUserIngredients(newList);
-    console.log(newList)
+    setDisplayedRecipes(recipeInfo);
 
     let apiUrl = `${serverUrl}api/v1/users/${user.username}/update-ingredients/`; // add-user only adds if needed
     let response = await fetch(apiUrl, {
@@ -219,8 +226,8 @@ export default function MainPage({recipes, user, serverUrl}) {
       method: "PATCH",
       body: JSON.stringify(newList),
     });
-    console.log(response)
-  }
+    console.log(response);
+  };
 
   return loading ? (
     "Loading..."
@@ -238,7 +245,7 @@ export default function MainPage({recipes, user, serverUrl}) {
         addIngredient={addUserIngredient}
         setIngredientFilter={setIngredientFilter}
       />
-      <Container style={{marginTop: 75, padding:0}}>
+      <Container style={{ marginTop: 75, padding: 0 }}>
         <Header
           filterName={filterName}
           user={user}
@@ -248,12 +255,10 @@ export default function MainPage({recipes, user, serverUrl}) {
         <Filter recipes = {allCompleteRecipes} setRecipes = {setDisplayedRecipes}/>
       </Container> */}
         <RecipeGrid
-          
           recipes={displayedRecipes}
           userIngredients={userIngredients}
           addFavorite={addFavorite}
           addIngredient={addUserIngredient}
-          width = {width}
         />
       </Container>
 
