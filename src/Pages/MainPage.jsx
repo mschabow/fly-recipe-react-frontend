@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Container } from "@material-ui/core";
-import SearchAppBar from "../Components/ApplicationBar";
-import Header from "../Components/Header";
-//import {Filter} from '../Components/Filter.jsx';
-import RecipeGrid from "../Components/RecipeGrid";
-//import {Footer} from '../Components/Footer'
-import SideDrawer from "../Components/SideDrawer";
+import { useState, useEffect } from "react";
+
 import GetRecipeInfo from "../Functions/CalculateIngredientStats";
 import ingredientFound from "../Functions/FindIngredient";
+import { getCompleteRecipes } from "../Adapters/RecipeAPIAdapter";
+import { getUserData, updateUserFavorites } from "../Adapters/UserAPIAdapter";
+import MainContent from "../Components/MainContent";
 
-export default function MainPage({ recipes, user, serverUrl }) {
+export default function MainPage({ user, serverUrl }) {
   const [loading, setLoading] = useState(true);
   const [displayedRecipes, setDisplayedRecipes] = useState(null);
   const [filterName, setFilterName] = useState("");
@@ -21,41 +18,31 @@ export default function MainPage({ recipes, user, serverUrl }) {
   const [displayedIngredients, setDisplayedIngredients] = useState([]);
 
   useEffect(() => {
-    const initializeUser = async () => {
-      console.log("Intializing User");
-      let apiUrl = `${serverUrl}api/v1/users/${user.username}/add-user/`; // add-user only adds if needed
-      let response = await fetch(apiUrl, {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-        },
-        method: "PUT",
-      });
-      let data = await response.json();
-      console.log(data);
+    async function initializeState() {
+      var recipes = await getCompleteRecipes();
+      var allIngredients = getAllIngredients(recipes);
+      var userData = await getUserData(user);
       let recipeInfo = updateRecipeStats(
         recipes,
-        data.ingredientList,
-        data.favoriteRecipes
+        userData.ingredientList,
+        userData.favoriteRecipes
       );
       recipeInfo = sortResults(recipeInfo);
-      setFavorites(data.favoriteRecipes);
-      setUserIngredients(data.ingredientList);
+
+      setFavorites(userData.favoriteRecipes);
+      setUserIngredients(userData.ingredientList);
       setSortedRecipes(recipeInfo);
       setDisplayedRecipes(recipeInfo);
-      var allIngredients = getAllIngredients();
       setAllIngredients(allIngredients);
       setDisplayedIngredients(allIngredients);
-
       setLoading(false);
-    };
-
-    initializeUser();
+    }
+    initializeState();
   }, []);
 
-  const getAllIngredients = () => {
+  const getAllIngredients = (recipes) => {
     var allIngredientNames = [];
     var allIngredients = [];
-
     recipes.forEach((recipe) => {
       recipe.ingredientList.forEach((ingredient) => {
         if (!ingredientFound(ingredient, allIngredientNames)) {
@@ -172,18 +159,8 @@ export default function MainPage({ recipes, user, serverUrl }) {
     } else {
       newList = favorites.concat(favorite);
     }
-
     setFavorites(newList);
-
-    let apiUrl = `${serverUrl}api/v1/users/${user.username}/update-favorites/`; // add-user only adds if needed
-    let response = await fetch(apiUrl, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      method: "PATCH",
-      body: JSON.stringify(newList),
-    });
+    updateUserFavorites(user, newList);
   };
 
   const addUserIngredient = async (ingredient) => {
@@ -216,55 +193,23 @@ export default function MainPage({ recipes, user, serverUrl }) {
     let recipeInfo = updateRecipeStats(displayedRecipes, newList, favorites);
     setUserIngredients(newList);
     setDisplayedRecipes(recipeInfo);
-
-    let apiUrl = `${serverUrl}api/v1/users/${user.username}/update-ingredients/`; // add-user only adds if needed
-    let response = await fetch(apiUrl, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      method: "PATCH",
-      body: JSON.stringify(newList),
-    });
-    console.log(response);
   };
 
   return loading ? (
     "Loading..."
   ) : (
-    <>
-      <SearchAppBar
-        setFilter={setRecipeFilter}
-        toggleDrawerOpen={toggleDrawerOpen}
-      />
-      <SideDrawer
-        drawerOpen={drawerOpen}
-        toggleDrawer={toggleDrawerOpen}
-        allIngredients={displayedIngredients}
-        userIngredients={userIngredients}
-        addIngredient={addUserIngredient}
-        setIngredientFilter={setIngredientFilter}
-      />
-      <Container style={{ marginTop: 75, padding: 0 }}>
-        <Header
-          filterName={filterName}
-          user={user}
-          recipeCount={recipes.length}
-        />
-        {/* <Container>
-        <Filter recipes = {allCompleteRecipes} setRecipes = {setDisplayedRecipes}/>
-      </Container> */}
-        <RecipeGrid
-          recipes={displayedRecipes}
-          userIngredients={userIngredients}
-          addFavorite={addFavorite}
-          addIngredient={addUserIngredient}
-        />
-      </Container>
-
-      {/* <Container>
-        <Footer />
-      </Container> */}
-    </>
+    <MainContent
+      setRecipeFilter={setRecipeFilter}
+      toggleDrawerOpen={toggleDrawerOpen}
+      drawerOpen={drawerOpen}
+      displayedIngredients={displayedIngredients}
+      userIngredients={userIngredients}
+      addUserIngredient={addUserIngredient}
+      setIngredientFilter={setIngredientFilter}
+      filterName={filterName}
+      user={user}
+      displayedRecipes={displayedRecipes}
+      addFavorite={addFavorite}
+    />
   );
 }
