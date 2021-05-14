@@ -81,41 +81,17 @@ export default function RecipeCard({
       : setFavoriteColor("disabled");
   };
 
-  const updateOwnedCount = (number) => {
-    setOwnedCount(ownedCount + number);
-  };
-  const updateOwnedOptionalCount = (number) => {
-    setOwnedOptionalCount(ownedOptionalCount + number);
-  };
-
   return loading ? (
     ""
   ) : (
     <Container>
       <Card>
-        {/* <CardHeader
-        avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            R
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={recipe.name}
-        subheader="September 14, 2016"
-      /> */}
         <CardMedia
           className={classes.media}
           image={recipe.videoInfo.thumbnail.url.replace("default", "sddefault")}
           title={recipe.name}
         />
         <CardContent>
-          {/* <Typography variant="body2" color="textSecondary" component="p" noWrap="true">
-          {recipe.name.replace("by Fly Fish Food", "")}
-        </Typography> */}
           <Typography variant="body2" color="textSecondary" component="p">
             {`Owned Ingredients: ${ownedCount} / ${ingredients}`}
           </Typography>
@@ -130,9 +106,6 @@ export default function RecipeCard({
           >
             <FavoriteIcon color={favoriteColor} />
           </IconButton>
-          {/* <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton> */}
           <IconButton aria-label="watch youtube video">
             <a
               href={`https://www.youtube.com/watch?v=${recipe.videoId}`}
@@ -142,7 +115,6 @@ export default function RecipeCard({
               <YouTubeIcon />
             </a>
           </IconButton>
-
           <IconButton
             className={clsx(classes.expand, {
               [classes.expandOpen]: expanded,
@@ -170,8 +142,6 @@ export default function RecipeCard({
                       ingredient={ingredient}
                       userIngredients={userIngredients}
                       addIngredient={addIngredient}
-                      updateOwnedCount={updateOwnedCount}
-                      updateOwnedOptionalCount={updateOwnedOptionalCount}
                     />
                   </Grid>
                 );

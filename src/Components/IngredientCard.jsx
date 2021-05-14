@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { Chip, Container, Grid } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
+import { Container, Grid } from "@material-ui/core";
 import ShopIcon from "@material-ui/icons/Shop";
-import { Shop } from "@material-ui/icons";
 
 export default function IngredientCard({
   ingredient,
   userIngredients,
   addIngredient,
   hideType,
-  updateOwnedCount,
-  updateOwnedOptionalCount,
 }) {
   const [Icon, setIcon] = useState(<AddIcon />);
   const [color, setColor] = useState("lightGray");
@@ -52,19 +44,10 @@ export default function IngredientCard({
       setIsOwned(!isOwned);
       setIcon(<RemoveIcon />);
       setColor("primary");
-
-      // ingredient.type.toLowerCase().includes("alternate") ||
-      // ingredient.type.toLowerCase().includes("option")
-      //   ? updateOwnedOptionalCount(1)
-      //   : updateOwnedCount(1);
     } else {
       setIsOwned(!isOwned);
       setIcon(<AddIcon />);
       setColor("disabled");
-      // ingredient.type.toLowerCase().includes("alternate") ||
-      // ingredient.type.toLowerCase().includes("option")
-      //   ? updateOwnedOptionalCount(-1)
-      //   : updateOwnedCount(-1);
     }
     addIngredient(ingredient);
   }
@@ -106,15 +89,6 @@ export default function IngredientCard({
             </IconButton>
           </Grid>
         </Grid>
-
-        {/* <Chip
-        size="small"
-        label={ingredient.name && ingredient.name.substring(0, 30)}
-        color={color}
-        deleteIcon={icon}
-        onDelete={() => onAddDelete(ingredient)}
-        onClick={() => handleClick(ingredient.link)}
-      /> */}
       </Card>
     </Container>
   );

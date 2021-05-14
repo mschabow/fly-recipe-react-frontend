@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 import GetRecipeInfo from "../Functions/CalculateIngredientStats";
 import ingredientFound from "../Functions/FindIngredient";
 import { getCompleteRecipes } from "../Adapters/RecipeAPIAdapter";

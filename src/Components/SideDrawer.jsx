@@ -90,8 +90,6 @@ export default function SideDrawer(props) {
         [classes.fullList]: true,
       })}
       role="presentation"
-      // onClick={() => toggleDrawer()}
-      // onKeyDown={() => toggleDrawer()}
     >
       <List>
         <Button fullWidth="true" color="primary" onClick={() => toggleDrawer()}>
@@ -100,7 +98,6 @@ export default function SideDrawer(props) {
         <Divider />
         <AmplifySignOut position="fixed" />
         <Divider />
-
         <div position="sticky" className={classes.search}>
           <div className={classes.searchIcon}>
             <SearchIcon />
@@ -117,8 +114,14 @@ export default function SideDrawer(props) {
             }}
           />
         </div>
-        <Divider/>
-        <Grid container direction="row" justify="left" spacing={1} style={{marginTop: 5}}>
+        <Divider />
+        <Grid
+          container
+          direction="row"
+          justify="left"
+          spacing={1}
+          style={{ marginTop: 5 }}
+        >
           {allIngredients.map((ingredient) => {
             return (
               <Grid item xs="12" key={ingredient.id}>
@@ -135,7 +138,6 @@ export default function SideDrawer(props) {
       </List>
     </div>
   );
-
   return (
     <React.Fragment>
       <Drawer anchor="left" open={drawerOpen} onClose={() => toggleDrawer()}>
