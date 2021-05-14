@@ -3,7 +3,11 @@ import { useState, useEffect } from "react";
 import GetRecipeInfo from "../Functions/CalculateIngredientStats";
 import ingredientFound from "../Functions/FindIngredient";
 import { getCompleteRecipes } from "../Adapters/RecipeAPIAdapter";
-import { getUserData, updateUserFavorites } from "../Adapters/UserAPIAdapter";
+import {
+  getUserData,
+  updateUserFavorites,
+  updateUserIngredients,
+} from "../Adapters/UserAPIAdapter";
 import MainContent from "../Components/MainContent";
 
 export default function MainPage({ user, serverUrl }) {
@@ -193,6 +197,7 @@ export default function MainPage({ user, serverUrl }) {
     let recipeInfo = updateRecipeStats(displayedRecipes, newList, favorites);
     setUserIngredients(newList);
     setDisplayedRecipes(recipeInfo);
+    updateUserIngredients(user, newList);
   };
 
   return loading ? (
